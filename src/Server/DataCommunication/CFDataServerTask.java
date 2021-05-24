@@ -1,4 +1,4 @@
-package Server;
+package Server.DataCommunication;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,9 +11,9 @@ public class CFDataServerTask implements Runnable{
 	private DataInputStream clientDataInput;
 	private DataOutputStream clientDataOutput;
 	private boolean running;
-	private ClientResponseCallback callback;
+	private ClientDataResponseCallback callback;
 
-	public CFDataServerTask(Socket client, ClientResponseCallback callback) {
+	public CFDataServerTask(Socket client, ClientDataResponseCallback callback) {
 		this.client = client;
 		this.callback = callback;
 	}

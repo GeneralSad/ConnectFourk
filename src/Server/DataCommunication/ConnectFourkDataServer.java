@@ -1,4 +1,6 @@
-package Server;
+package Server.DataCommunication;
+
+import Server.DataCommunication.CFDataServerTask;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,7 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectFourkDataServer implements ClientResponseCallback {
+public class ConnectFourkDataServer implements ClientDataResponseCallback {
 	private int port;
 	List<CFDataServerTask> clients;
 
@@ -17,7 +19,7 @@ public class ConnectFourkDataServer implements ClientResponseCallback {
 		this.clients = new ArrayList<>();
 	}
 
-	public void start() {
+	public void startServer() {
 		try {
 			ServerSocket serverSocket = new ServerSocket(this.port);
 			this.running = true;
@@ -42,11 +44,6 @@ public class ConnectFourkDataServer implements ClientResponseCallback {
 
 	@Override
 	public void stringMessageReceived(String string) {
-
-	}
-
-	@Override
-	public void objectMessageReceived(Object object) {
 
 	}
 }

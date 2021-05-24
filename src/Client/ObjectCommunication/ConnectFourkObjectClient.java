@@ -1,52 +1,42 @@
-package Client;
+package Client.ObjectCommunication;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ConnectFourkDataClient {
+public class ConnectFourkObjectClient {
 	private String host;
 	private int port;
 
 	private Socket socket;
-	private DataInputStream clientDataInput;
-	private DataOutputStream clientDataOutput;
+	private ObjectInputStream clientObjectInput;
+	private ObjectOutputStream clientObjectOutput;
 
 	private boolean running;
 
-	public ConnectFourkDataClient(String host, int port) {
+	public ConnectFourkObjectClient(String host, int port) {
 		this.host = host;
 		this.port = port;
 	}
-
-	public static void main(String[] args) {
-//		System.out.println("What is your name?");
-//		Scanner reader = new Scanner(System.in);
-//		String name = reader.nextLine();
-
-		ConnectFourkDataClient connectFourkDataClient = new ConnectFourkDataClient("localhost", 27272);
-
-		connectFourkDataClient.startClient();
-	}
-
 
 	public void startClient() {
 
 		try {
 			this.socket = new Socket(this.host, this.port);
 
-			this.clientDataInput = new DataInputStream(this.socket.getInputStream());
-			this.clientDataOutput = new DataOutputStream(this.socket.getOutputStream());
-		//	this.clientDataOutput.writeUTF(this.name);
+			this.clientObjectOutput = new ObjectOutputStream(this.socket.getOutputStream());
+			this.clientObjectOutput.flush();
+			this.clientObjectInput = new ObjectInputStream(this.socket.getInputStream());
+
 
 			this.running = true;
 			new Thread(() -> {
 				while (this.running) {
 					try {
-						String response = clientDataInput.readUTF();
+						Object response = this.clientObjectInput.readObject();
 						//TODO Do something with the response;
 
-					} catch (IOException e) {
+					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();
 					}
 				}
@@ -59,13 +49,14 @@ public class ConnectFourkDataClient {
 					try {
 						System.out.print("Message: ");
 						String message = reader.nextLine();
-						this.clientDataOutput.writeUTF(message);
+						this.clientObjectOutput.writeObject(message);
+						//TODO Send something useful;
 						Thread.sleep(1000);
-
 					} catch (IOException | InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
+				close();
 			}).start();
 		} catch (IOException e) {
 			System.out.println("Could not connect to the server: " + e.getMessage());
@@ -78,9 +69,9 @@ public class ConnectFourkDataClient {
 
 	public void close() {
 		try {
-			this.clientDataInput.close();
+			this.clientObjectInput.close();
 			this.socket.close();
-			this.clientDataOutput.close();
+			this.clientObjectOutput.close();
 
 		} catch (IOException e) {
 			System.out.println("Could not close something: " + e.getMessage());
