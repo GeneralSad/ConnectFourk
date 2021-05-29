@@ -1,7 +1,7 @@
 package ConnectFour;
 
-public enum Disk {
+public enum Disc {
 	EMPTY,
 	RED,
-	BLUE
+	YELLOW
 }

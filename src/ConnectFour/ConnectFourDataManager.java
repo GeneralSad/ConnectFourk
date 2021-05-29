@@ -2,23 +2,37 @@ package ConnectFour;
 
 public class ConnectFourDataManager {
 
-	private Disk[][] diskLocations;
+	private Disc[][] discLocations;
 
 	public ConnectFourDataManager() {
-		//The disk array is in Y X format due to that making more sense for checking where a disk will drop!!
-		this.diskLocations = new Disk[7][6];
+		this.discLocations = new Disc[7][6];
 		resetConnectFourBoard();
 	}
 
 	public void resetConnectFourBoard() {
 		for (int y = 0; y < 6; y++) {
 			for (int x = 0; x < 7; x++) {
-				diskLocations[x][y] =  Disk.EMPTY;
+				discLocations[x][y] =  Disc.EMPTY;
 			}
 		}
 	}
 
-	public Disk[][] getDiskLocations() {
-		return this.diskLocations;
+	public void dropDisc(int xDropLocation, Disc discColor) {
+		dropDisc(xDropLocation, 0, discColor);
+	}
+
+	public void dropDisc(int xDropLocation, int yDropLocation,Disc discColor) {
+		if (yDropLocation >= 6) {
+			return;
+		}
+		if (this.discLocations[xDropLocation][yDropLocation] != Disc.EMPTY) {
+			dropDisc(xDropLocation, yDropLocation + 1, discColor);
+		} else {
+			this.discLocations[xDropLocation][yDropLocation] = discColor;
+		}
+	}
+
+	public Disc[][] getDiscLocations() {
+		return this.discLocations;
 	}
 }

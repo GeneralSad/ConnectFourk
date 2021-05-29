@@ -2,9 +2,7 @@ package ConnectFour;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Circle;
 import org.jfree.fx.FXGraphics2D;
-import org.jfree.fx.ResizableCanvas;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -12,10 +10,10 @@ import java.awt.geom.Ellipse2D;
 
 public class ConnectFourCanvas {
 	private Canvas canvas;
-	private Disk[][] diskLocations;
+	private Disc[][] discLocations;
 
-	public ConnectFourCanvas(BorderPane borderPane, Disk[][] diskLocations){
-		this.diskLocations = diskLocations;
+	public ConnectFourCanvas(BorderPane borderPane, Disc[][] discLocations){
+		this.discLocations = discLocations;
 		this.canvas = new Canvas(700, 600);
 
 		borderPane.setCenter(this.canvas);
@@ -23,8 +21,14 @@ public class ConnectFourCanvas {
 		draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
 	}
 
+	public void updateCanvas() {
+		draw(new FXGraphics2D(this.canvas.getGraphicsContext2D()));
+	}
+
 	private void draw(FXGraphics2D graphics) {
-		graphics.setTransform(new AffineTransform());
+		AffineTransform affineTransform = new AffineTransform();
+
+		graphics.setTransform(affineTransform);
 		graphics.setBackground(Color.BLUE);
 		graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
 
@@ -35,15 +39,15 @@ public class ConnectFourCanvas {
 				graphics.draw(shape);
 
 				//The disk array is in Y X format due to that making more sense for checking where a disk will drop!!
-				switch (this.diskLocations[x][y]) {
+				switch (this.discLocations[x][5 - y]) {
 					case EMPTY:
 						graphics.setColor(Color.white);
 						break;
 					case RED:
 						graphics.setColor(Color.red);
 						break;
-					case BLUE:
-						graphics.setColor(Color.blue);
+					case YELLOW:
+						graphics.setColor(Color.yellow);
 						break;
 				}
 				graphics.fill(shape);
