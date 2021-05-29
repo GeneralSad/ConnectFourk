@@ -14,6 +14,9 @@ public class ConnectFourModule extends Application {
 	private ConnectFourCanvas canvas;
 	private ConnectFourDataManager dataManager;
 
+	//should probably be temporary
+	private Disc turn = Disc.YELLOW;
+
 	public ConnectFourModule() {
 		this.borderPane = new BorderPane();
 		this.dataManager = new ConnectFourDataManager();
@@ -36,12 +39,22 @@ public class ConnectFourModule extends Application {
 			Button button = new Button("drop: " + (i + 1));
 			int xValue = i;
 			button.setOnAction(event -> {
-				this.dataManager.dropDisc(xValue, Disc.RED);
+				this.dataManager.dropDisc(xValue, getTurn());
 				this.canvas.updateCanvas();
 			});
 			hBox.getChildren().add(button);
 		}
 
 		this.borderPane.setTop(hBox);
+	}
+
+	//should probably be temporary
+	public Disc getTurn() {
+		if (this.turn.equals(Disc.RED)) {
+			this.turn = Disc.YELLOW;
+		} else {
+			this.turn = Disc.RED;
+		}
+		return this.turn;
 	}
 }
