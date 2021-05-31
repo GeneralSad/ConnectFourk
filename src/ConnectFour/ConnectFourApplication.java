@@ -3,16 +3,21 @@ package ConnectFour;
 import Client.ObjectCommunication.ConnectFourkObjectClient;
 import Server.ObjectCommunication.ObjectResponseCallback;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -47,11 +52,36 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 		primaryStage.setResizable(false);
 		primaryStage.show();
 
-		Label turnText = new Label(turn + "'s up!");
+		Label turnText = new Label("Turn: \n" + Disc.RED);
 		turnText.setWrapText(true);
-		turnText.setAlignment(Pos.TOP_LEFT);
+		turnText.setPadding(new Insets(0, 10, 0, 10));
 		turnText.setFont(new Font(30));
-		borderPane.setRight(turnText);
+
+		VBox frame = new VBox();
+		frame.setAlignment(Pos.TOP_LEFT);
+		frame.getChildren().add(turnText);
+
+		TextArea messageArea = new TextArea();
+		messageArea.setEditable(false);
+		frame.getChildren().add(messageArea);
+
+
+		TextField messageField = new TextField();
+		frame.getChildren().add(messageField);
+
+		messageField.setOnKeyPressed(event -> {
+
+			if (event.getCode() == KeyCode.ENTER) {
+
+				//TODO send messages?
+				messageArea.setText(messageArea.getText() + playerColor + ": " + messageField.getText() + "\n");
+				messageField.clear();
+
+			}
+
+		});
+
+		borderPane.setRight(frame);
 
 	}
 
@@ -75,16 +105,28 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 			hBox.getChildren().add(button);
 		}
 		this.borderPane.setTop(hBox);
+
+		Button resetButton = new Button();
+		resetButton.setGraphic(new ImageView("\\Revert.png"));
+		hBox.getChildren().add(resetButton);
+
+		resetButton.setOnAction(event -> {
+
+			VBox scoreBox = (VBox) borderPane.getRight();
+			TextArea textArea = (TextArea)scoreBox.getChildren().get(1);
+			textArea.setText(textArea.getText() + playerColor + " asks for a reset!\n");
+			textArea.setText(textArea.getText() + playerColor + " agrees!\n");
+
+		});
+
 	}
 
 	public void setTurn(Disc turn) {
 
-		this.turn = Disc.RED;
+		this.turn = turn;
 
-
-
-		TextArea turnText = (TextArea) borderPane.getRight();
-		turnText.setText(this.turn + "'s up!");
+		Label turnText = (Label) borderPane.getRight();
+		turnText.setText("Turn:\n" + this.turn);
 
 	}
 
