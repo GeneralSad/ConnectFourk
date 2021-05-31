@@ -1,12 +1,11 @@
 package Client.ObjectCommunication;
 
-import ConnectFour.ConnectFourApplication;
+import ConnectFour.ConnectFourObjectApplication;
 import javafx.application.Application;
-import javafx.application.Platform;
 
 public class ObjectClientMain {
 
 	public static void main(String[] args) {
-		Application.launch(ConnectFourApplication.class);
+		Application.launch(ConnectFourObjectApplication.class);
 	}
 }

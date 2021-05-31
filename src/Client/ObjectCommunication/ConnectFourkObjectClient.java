@@ -1,9 +1,7 @@
 package Client.ObjectCommunication;
 
-import ConnectFour.ConnectFourApplication;
 import ConnectFour.Disc;
 import Server.ObjectCommunication.ObjectResponseCallback;
-import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
@@ -59,22 +57,6 @@ public class ConnectFourkObjectClient {
 					}
 				}
 
-			}).start();
-
-			new Thread(() -> {
-				while (this.running) {
-					Scanner reader = new Scanner(System.in);
-					try {
-						System.out.print("Message: ");
-						String message = reader.nextLine();
-						this.clientObjectOutput.writeObject(message);
-						//TODO Send something useful;
-						Thread.sleep(100);
-					} catch (IOException | InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				close();
 			}).start();
 		} catch (IOException e) {
 			System.out.println("Could not connect to the server: " + e.getMessage());

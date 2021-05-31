@@ -11,9 +11,9 @@ public class CFDataServerTask implements Runnable{
 	private DataInputStream clientDataInput;
 	private DataOutputStream clientDataOutput;
 	private boolean running;
-	private ClientDataResponseCallback callback;
+	private DataResponseCallback callback;
 
-	public CFDataServerTask(Socket client, ClientDataResponseCallback callback) {
+	public CFDataServerTask(Socket client, DataResponseCallback callback) {
 		this.client = client;
 		this.callback = callback;
 	}
@@ -37,6 +37,7 @@ public class CFDataServerTask implements Runnable{
 				String message = this.clientDataInput.readUTF();
 				System.out.println(message);
 				//TODO Do something with this.
+				this.callback.stringMessageReceived(message);
 			}
 		} catch (IOException e) {
 			System.out.println("Could not send or receive messages.");
@@ -47,6 +48,14 @@ public class CFDataServerTask implements Runnable{
 			this.clientDataInput.close();
 			this.clientDataOutput.close();
 			this.client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendDataToClient(String message) {
+		try {
+			this.clientDataOutput.writeUTF(message);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

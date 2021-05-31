@@ -59,7 +59,13 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 				{
 					client.sendObjectToClient(object);
 				}
-			} else return;
+			}
+		}
+
+		if (object instanceof String) {
+			for (CFObjectServerTask client : clients) {
+				client.sendObjectToClient(object);
+			}
 		}
 //		for (CFObjectServerTask client : clients)
 //		{

@@ -3,6 +3,7 @@ package ConnectFour;
 import Client.ObjectCommunication.ConnectFourkObjectClient;
 import Server.ObjectCommunication.ObjectResponseCallback;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -23,7 +24,7 @@ import javafx.stage.Stage;
 
 import java.net.URL;
 
-public class ConnectFourApplication extends Application implements ObjectResponseCallback {
+public class ConnectFourObjectApplication extends Application implements ObjectResponseCallback {
 	private BorderPane borderPane;
 	private ConnectFourCanvas canvas;
 	private ConnectFourDataManager dataManager;
@@ -35,7 +36,7 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 	private TextArea messageArea;
 	private Label turnText;
 
-	public ConnectFourApplication() {
+	public ConnectFourObjectApplication() {
 		this.borderPane = new BorderPane();
 		this.dataObject = new ConnectFourDataObject();
 		this.dataManager = new ConnectFourDataManager(this.dataObject);
@@ -80,6 +81,7 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 
 				//TODO send messages?
 				messageArea.setText(messageArea.getText() + playerColor + ": " + messageField.getText() + "\n");
+				this.client.sendObjectMessage(playerColor+ ": " + messageField.getText());
 				messageField.clear();
 
 			}
@@ -150,10 +152,21 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 
 				this.turn = this.dataObject.getTurn();
-				this.turnText.setText("Turn:\n" + this.turn);
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						turnText.setText("Turn:\n" + turn);
+					}
+				});
 			} else {
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 				this.messageArea.setText(messageArea.getText() + this.dataObject.getWinner() + " has won!\n");
+			}
+		}
+
+		if (response instanceof String) {
+			if (this.playerColor != Disc.valueOf(((String) response).substring(0,((String) response).indexOf(":")))){
+				messageArea.setText(messageArea.getText() + response + "\n");
 			}
 		}
 	}

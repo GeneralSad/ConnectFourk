@@ -1,5 +1,7 @@
 package Client.DataCommunication;
 
+import Server.DataCommunication.DataResponseCallback;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -12,23 +14,15 @@ public class ConnectFourkDataClient {
 	private DataInputStream clientDataInput;
 	private DataOutputStream clientDataOutput;
 
+	private DataResponseCallback callback;
+
 	private boolean running;
 
-	public ConnectFourkDataClient(String host, int port) {
+	public ConnectFourkDataClient(String host, int port, DataResponseCallback callback) {
 		this.host = host;
 		this.port = port;
+		this.callback = callback;
 	}
-
-	public static void main(String[] args) {
-//		System.out.println("What is your name?");
-//		Scanner reader = new Scanner(System.in);
-//		String name = reader.nextLine();
-
-		ConnectFourkDataClient connectFourkDataClient = new ConnectFourkDataClient("localhost", 27272);
-
-		connectFourkDataClient.startClient();
-	}
-
 
 	public void startClient() {
 
@@ -44,8 +38,8 @@ public class ConnectFourkDataClient {
 				while (this.running) {
 					try {
 						String response = clientDataInput.readUTF();
-						//TODO Do something with the response;
-
+						System.out.println("Response: " + response);
+						this.callback.stringMessageReceived(response);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -53,28 +47,17 @@ public class ConnectFourkDataClient {
 
 			}).start();
 
-			new Thread(() -> {
-				while (this.running) {
-					Scanner reader = new Scanner(System.in);
-					try {
-						System.out.print("Message: ");
-						String message = reader.nextLine();
-						this.clientDataOutput.writeUTF(message);
-						Thread.sleep(1000);
-
-					} catch (IOException | InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				close();
-			}).start();
 		} catch (IOException e) {
 			System.out.println("Could not connect to the server: " + e.getMessage());
 		}
 	}
 
 	public void sendMessage(String message) {
-
+		try {
+			this.clientDataOutput.writeUTF(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void close() {

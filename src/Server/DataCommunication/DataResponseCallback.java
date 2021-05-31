@@ -1,6 +1,6 @@
 package Server.DataCommunication;
 
-public interface ClientDataResponseCallback {
+public interface DataResponseCallback {
 
 	void stringMessageReceived(String string);
 
