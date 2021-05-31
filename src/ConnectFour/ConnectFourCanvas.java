@@ -11,9 +11,11 @@ import java.awt.geom.Ellipse2D;
 public class ConnectFourCanvas {
 	private Canvas canvas;
 	private Disc[][] discLocations;
+	private Ellipse2D[][] ellipse2DS;
 
 	public ConnectFourCanvas(BorderPane borderPane, Disc[][] discLocations){
 		this.discLocations = discLocations;
+		initEllipses();
 		this.canvas = new Canvas(700, 600);
 
 		borderPane.setLeft(this.canvas);
@@ -32,10 +34,9 @@ public class ConnectFourCanvas {
 
 		for (int y = 0; y < 6; y++) {
 			for (int x = 0; x < 7; x++) {
-				Shape shape = new Ellipse2D.Double((12.5 + x * 25) + 75 * x,(12.5 + y * 25) + 75 * y,75,75);
+				Shape shape = this.ellipse2DS[x][5 - y];
 				graphics.setColor(Color.BLACK);
 				graphics.draw(shape);
-
 				//The disk array is in Y X format due to that making more sense for checking where a disk will drop!!
 				switch (this.discLocations[x][5 - y]) {
 					case EMPTY:
@@ -49,6 +50,15 @@ public class ConnectFourCanvas {
 						break;
 				}
 				graphics.fill(shape);
+			}
+		}
+	}
+
+	private void initEllipses() {
+		this.ellipse2DS = new Ellipse2D[7][6];
+		for (int y = 0; y < 6; y++) {
+			for (int x = 0; x < 7; x++) {
+				this.ellipse2DS[x][5 - y] = new Ellipse2D.Double((12.5 + x * 25) + 75 * x,(12.5 + y * 25) + 75 * y,75,75);
 			}
 		}
 	}

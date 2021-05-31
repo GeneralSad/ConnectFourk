@@ -49,8 +49,8 @@ public class ConnectFourDataManager {
 				if (discLocations[xLocation + (3 - i)][yLocation] == discColor) {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
-						//TODO do something with a win
-						System.out.println("WIN WIN WIN: " + discColor);
+						this.dataObject.setWinner(discColor);
+						System.out.println("WINNER: " + discColor);
 						return;
 					}
 				} else {
@@ -73,8 +73,8 @@ public class ConnectFourDataManager {
 				if (discLocations[xLocation][yLocation + (3 - i)] == discColor) {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
-						//TODO do something with a win
-						System.out.println("WIN WIN WIN: " + discColor);
+						this.dataObject.setWinner(discColor);
+						System.out.println("WINNER: " + discColor);
 						return;
 					}
 				} else {
@@ -97,8 +97,8 @@ public class ConnectFourDataManager {
 				if (discLocations[xLocation + (3 - i)][yLocation + (3 - i)] == discColor) {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
-						//TODO do something with a win
-						System.out.println("WIN WIN WIN: " + discColor);
+						this.dataObject.setWinner(discColor);
+						System.out.println("WINNER: " + discColor);
 						return;
 					}
 				} else {
@@ -122,7 +122,8 @@ public class ConnectFourDataManager {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
 						//TODO do something with a win
-						System.out.println("WIN WIN WIN: " + discColor);
+						this.dataObject.setWinner(discColor);
+						System.out.println("WINNER: " + discColor);
 						return;
 					}
 				} else {

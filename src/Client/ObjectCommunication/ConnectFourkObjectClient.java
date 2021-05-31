@@ -36,23 +36,22 @@ public class ConnectFourkObjectClient {
 			this.clientObjectOutput.flush();
 			this.clientObjectInput = new ObjectInputStream(this.socket.getInputStream());
 
-
 			this.running = true;
 			new Thread(() -> {
 				try {
 					Object response = this.clientObjectInput.readObject();
-					System.out.println(response);
+					System.out.println("response: " + response);
 					if (response instanceof Disc) {
 						this.callback.objectMessageReceived(response);
 					}
-				} catch (Exception e) {
+				} catch (IOException | ClassNotFoundException e) {
 					e.printStackTrace();
 				}
 
 				while (this.running) {
 					try {
 						Object response = this.clientObjectInput.readObject();
-						System.out.println(response);
+						System.out.println("response: " + response);
 						this.callback.objectMessageReceived(response);
 
 					} catch (IOException | ClassNotFoundException e) {

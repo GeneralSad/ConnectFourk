@@ -24,10 +24,8 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 	private ConnectFourDataManager dataManager;
 	private Disc turn;
 	private ConnectFourDataObject dataObject;
-
 	private ConnectFourkObjectClient client;
 
-	//should probably be temporary
 	private Disc playerColor;
 
 	public ConnectFourApplication() {
@@ -68,9 +66,9 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 
 			int xValue = i;
 			button.setOnAction(event -> {
-				if (dataObject.getTurn().equals(this.playerColor)) {
+				if (this.dataObject.getTurn().equals(this.playerColor)) {
 					this.dataManager.dropDisc(xValue, this.playerColor);
-					this.canvas.updateDiscLocations(dataObject.getDiscLocations());
+					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 					this.client.sendObjectMessage(this.dataObject);
 				}
 			});
@@ -97,9 +95,11 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 		}
 
 		if (response instanceof ConnectFourDataObject) {
-			this.dataObject = (ConnectFourDataObject) response;
-			this.dataManager.setDataObject((ConnectFourDataObject) response);
-			this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+			if (!this.dataObject.getWinner().equals(Disc.EMPTY)) {
+				this.dataObject = (ConnectFourDataObject) response;
+				this.dataManager.setDataObject((ConnectFourDataObject) response);
+				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+			}
 		}
 	}
 }
