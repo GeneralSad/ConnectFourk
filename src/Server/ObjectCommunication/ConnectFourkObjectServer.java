@@ -1,6 +1,6 @@
 package Server.ObjectCommunication;
 
-import Server.DataCommunication.CFDataServerTask;
+import ConnectFour.Disc;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectFourkObjectServer implements ClientObjectResponseCallback {
+public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	private int port;
 	List<CFObjectServerTask> clients;
 
@@ -34,6 +34,11 @@ public class ConnectFourkObjectServer implements ClientObjectResponseCallback {
 				thread.start();
 
 				this.clients.add(objectServerTask);
+
+				if (this.clients.size() == 2) {
+					this.clients.get(0).sendObjectToClient(Disc.RED);
+					this.clients.get(1).sendObjectToClient(Disc.YELLOW);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

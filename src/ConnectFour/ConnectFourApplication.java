@@ -1,5 +1,7 @@
 package ConnectFour;
 
+import Client.ObjectCommunication.ConnectFourkObjectClient;
+import Server.ObjectCommunication.ObjectResponseCallback;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,19 +11,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-public class ConnectFourModule extends Application {
+public class ConnectFourApplication extends Application implements ObjectResponseCallback {
 	private BorderPane borderPane;
 	private ConnectFourCanvas canvas;
 	private ConnectFourDataManager dataManager;
 
 	//should probably be temporary
-	private Disc turn = Disc.YELLOW;
+	private Disc playerColor;
 
-	public ConnectFourModule() {
+	public ConnectFourApplication() {
 		this.borderPane = new BorderPane();
 		this.dataManager = new ConnectFourDataManager();
 		this.canvas = new ConnectFourCanvas(this.borderPane, this.dataManager.getDiscLocations());
-
+		ConnectFourkObjectClient client = new ConnectFourkObjectClient("localhost", 27272, this);
+		client.startClient();
 	}
 
 	@Override
@@ -39,22 +42,18 @@ public class ConnectFourModule extends Application {
 			Button button = new Button("drop: " + (i + 1));
 			int xValue = i;
 			button.setOnAction(event -> {
-				this.dataManager.dropDisc(xValue, getTurn());
+				this.dataManager.dropDisc(xValue, this.playerColor);
 				this.canvas.updateCanvas();
 			});
 			hBox.getChildren().add(button);
 		}
-
 		this.borderPane.setTop(hBox);
 	}
 
-	//should probably be temporary
-	public Disc getTurn() {
-		if (this.turn.equals(Disc.RED)) {
-			this.turn = Disc.YELLOW;
-		} else {
-			this.turn = Disc.RED;
+	@Override
+	public void objectMessageReceived(Object response) {
+		if (response instanceof Disc) {
+			this.playerColor = (Disc) response;
 		}
-		return this.turn;
 	}
 }

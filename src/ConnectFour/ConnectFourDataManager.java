@@ -12,7 +12,7 @@ public class ConnectFourDataManager {
 	public void resetConnectFourBoard() {
 		for (int y = 0; y < 6; y++) {
 			for (int x = 0; x < 7; x++) {
-				discLocations[x][y] =  Disc.EMPTY;
+				this.discLocations[x][y] =  Disc.EMPTY;
 			}
 		}
 	}
@@ -29,7 +29,7 @@ public class ConnectFourDataManager {
 			dropDisc(xDropLocation, yDropLocation + 1, discColor);
 		} else {
 			this.discLocations[xDropLocation][yDropLocation] = discColor;
-			winChecker(xDropLocation, yDropLocation , discColor);
+			winChecker(xDropLocation, yDropLocation, discColor);
 		}
 	}
 
@@ -130,9 +130,6 @@ public class ConnectFourDataManager {
 				}
 			}
 		}
-
-
-
 	}
 
 	public Disc[][] getDiscLocations() {

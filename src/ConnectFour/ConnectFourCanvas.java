@@ -26,9 +26,7 @@ public class ConnectFourCanvas {
 	}
 
 	private void draw(FXGraphics2D graphics) {
-		AffineTransform affineTransform = new AffineTransform();
-
-		graphics.setTransform(affineTransform);
+		graphics.setTransform(new AffineTransform());
 		graphics.setBackground(Color.BLUE);
 		graphics.clearRect(0, 0, (int) canvas.getWidth(), (int) canvas.getHeight());
 
@@ -53,7 +51,9 @@ public class ConnectFourCanvas {
 				graphics.fill(shape);
 			}
 		}
+	}
 
-
+	public void setDiscLocations(Disc[][] discLocations) {
+		this.discLocations = discLocations;
 	}
 }

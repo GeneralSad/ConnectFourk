@@ -9,9 +9,9 @@ public class CFObjectServerTask implements Runnable{
 	private ObjectInputStream clientObjectInput;
 	private ObjectOutputStream clientObjectOutput;
 	private boolean running;
-	private ClientObjectResponseCallback callback;
+	private ObjectResponseCallback callback;
 
-	public CFObjectServerTask(Socket client, ClientObjectResponseCallback callback) {
+	public CFObjectServerTask(Socket client, ObjectResponseCallback callback) {
 		this.client = client;
 		this.callback = callback;
 	}
@@ -37,6 +37,7 @@ public class CFObjectServerTask implements Runnable{
 				Object responseObject = this.clientObjectInput.readObject();
 				System.out.println(responseObject);
 				//TODO Do something with this.
+				//this.callback.objectMessageReceived();
 			}
 		} catch (IOException e) {
 			System.out.println("Could not send or receive messages.");
@@ -49,6 +50,14 @@ public class CFObjectServerTask implements Runnable{
 			this.clientObjectInput.close();
 			this.clientObjectOutput.close();
 			this.client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendObjectToClient(Object message) {
+		try {
+			this.clientObjectOutput.writeObject(message);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

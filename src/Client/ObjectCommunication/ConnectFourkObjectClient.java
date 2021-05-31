@@ -1,5 +1,10 @@
 package Client.ObjectCommunication;
 
+import ConnectFour.ConnectFourApplication;
+import ConnectFour.Disc;
+import Server.ObjectCommunication.ObjectResponseCallback;
+import javafx.stage.Stage;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
@@ -12,11 +17,14 @@ public class ConnectFourkObjectClient {
 	private ObjectInputStream clientObjectInput;
 	private ObjectOutputStream clientObjectOutput;
 
+	private ObjectResponseCallback callback;
+
 	private boolean running;
 
-	public ConnectFourkObjectClient(String host, int port) {
+	public ConnectFourkObjectClient(String host, int port, ObjectResponseCallback callback) {
 		this.host = host;
 		this.port = port;
+		this.callback = callback;
 	}
 
 	public void startClient() {
@@ -31,10 +39,20 @@ public class ConnectFourkObjectClient {
 
 			this.running = true;
 			new Thread(() -> {
+				try {
+					Object response = this.clientObjectInput.readObject();
+					System.out.println(response);
+					if (response instanceof Disc) {
+					this.callback.objectMessageReceived(response);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				while (this.running) {
 					try {
 						Object response = this.clientObjectInput.readObject();
-						//TODO Do something with the response;
+						System.out.println(response);
 
 					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();
