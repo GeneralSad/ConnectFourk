@@ -50,7 +50,7 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	public void objectMessageReceived(Object object) {
 		for (CFObjectServerTask client : clients)
 		{
-			client.sendMessage(object);
+			client.sendObjectToClient(object);
 		}
 	}
 }
