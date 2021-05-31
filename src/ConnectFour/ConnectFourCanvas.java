@@ -16,7 +16,7 @@ public class ConnectFourCanvas {
 		this.discLocations = discLocations;
 		this.canvas = new Canvas(700, 600);
 
-		borderPane.setCenter(this.canvas);
+		borderPane.setLeft(this.canvas);
 
 		draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
 	}
