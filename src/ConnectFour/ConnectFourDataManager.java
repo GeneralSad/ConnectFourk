@@ -59,6 +59,7 @@ public class ConnectFourDataManager {
 			}
 		}
 
+		discsWithSameColor = 0;
 		//checks from top to bottom to count the NO same colored discs next to the current one
 		for (int i = 0; i < 7; i++) {
 			if (i == 3) {
@@ -82,6 +83,7 @@ public class ConnectFourDataManager {
 			}
 		}
 
+		discsWithSameColor = 0;
 		//checks from top left to bottom right to count the NO same colored discs next to the current one
 		for (int i = 0; i < 7; i++) {
 			if (i == 3) {
@@ -105,6 +107,7 @@ public class ConnectFourDataManager {
 			}
 		}
 
+		discsWithSameColor = 0;
 		//checks from top left to bottom right to count the NO same colored discs next to the current one
 		for (int i = 0; i < 7; i++) {
 			if (i == 3) {
