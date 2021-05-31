@@ -32,6 +32,8 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 	private ConnectFourkObjectClient client;
 
 	private Disc playerColor;
+	private TextArea messageArea;
+	private Label turnText;
 
 	public ConnectFourApplication() {
 		this.borderPane = new BorderPane();
@@ -47,12 +49,12 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 		initButtons();
 		primaryStage.setScene(new Scene(this.borderPane));
 		primaryStage.setTitle("Connect 4");
-		primaryStage.setMinWidth(850);
+		primaryStage.setMinWidth(870);
 		primaryStage.setMinHeight(600);
-		primaryStage.setResizable(false);
+		//primaryStage.setResizable(false);
 		primaryStage.show();
 
-		Label turnText = new Label("Turn: \n" + Disc.RED);
+		this.turnText = new Label("Turn: \n" + this.dataObject.getTurn());
 		turnText.setWrapText(true);
 		turnText.setPadding(new Insets(0, 10, 0, 10));
 		turnText.setFont(new Font(30));
@@ -61,8 +63,11 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 		frame.setAlignment(Pos.TOP_LEFT);
 		frame.getChildren().add(turnText);
 
-		TextArea messageArea = new TextArea();
+		this.messageArea = new TextArea();
 		messageArea.setEditable(false);
+		messageArea.setWrapText(true);
+		messageArea.setMaxWidth(151);
+		messageArea.setMinWidth(150);
 		frame.getChildren().add(messageArea);
 
 
@@ -112,6 +117,7 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 
 		resetButton.setOnAction(event -> {
 
+			//TODO Send and receive message for reset
 			VBox scoreBox = (VBox) borderPane.getRight();
 			TextArea textArea = (TextArea)scoreBox.getChildren().get(1);
 			textArea.setText(textArea.getText() + playerColor + " asks for a reset!\n");
@@ -125,7 +131,8 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 
 		this.turn = turn;
 
-		Label turnText = (Label) borderPane.getRight();
+		VBox vBox = (VBox) borderPane.getRight();
+		Label turnText = (Label) vBox.getChildren().get(0);
 		turnText.setText("Turn:\n" + this.turn);
 
 	}
@@ -141,6 +148,12 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 				this.dataObject = (ConnectFourDataObject) response;
 				this.dataManager.setDataObject((ConnectFourDataObject) response);
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+
+				this.turn = this.dataObject.getTurn();
+				this.turnText.setText("Turn:\n" + this.turn);
+			} else {
+				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+				this.messageArea.setText(messageArea.getText() + this.dataObject.getWinner() + " has won!\n");
 			}
 		}
 	}

@@ -3,9 +3,11 @@ package ConnectFour;
 public class ConnectFourDataManager {
 
 	private ConnectFourDataObject dataObject;
+	private boolean hasWon;
 
 	public ConnectFourDataManager(ConnectFourDataObject dataObject) {
 		this.dataObject = dataObject;
+		hasWon = false;
 		resetConnectFourBoard();
 	}
 
@@ -50,6 +52,7 @@ public class ConnectFourDataManager {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
 						this.dataObject.setWinner(discColor);
+						hasWon = true;
 						System.out.println("WINNER: " + discColor);
 						return;
 					}
@@ -74,6 +77,7 @@ public class ConnectFourDataManager {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
 						this.dataObject.setWinner(discColor);
+						hasWon = true;
 						System.out.println("WINNER: " + discColor);
 						return;
 					}
@@ -98,6 +102,7 @@ public class ConnectFourDataManager {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
 						this.dataObject.setWinner(discColor);
+						hasWon = true;
 						System.out.println("WINNER: " + discColor);
 						return;
 					}
@@ -123,6 +128,7 @@ public class ConnectFourDataManager {
 					if (discsWithSameColor >= 3) {
 						//TODO do something with a win
 						this.dataObject.setWinner(discColor);
+						hasWon = true;
 						System.out.println("WINNER: " + discColor);
 						return;
 					}
@@ -135,6 +141,10 @@ public class ConnectFourDataManager {
 				}
 			}
 		}
+	}
+
+	public boolean getHasWon() {
+		return hasWon;
 	}
 
 	public void setDataObject(ConnectFourDataObject dataObject) {
