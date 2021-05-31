@@ -17,20 +17,20 @@ public class CFObjectServerTask implements Runnable{
 	}
 
 
-	@Override
-	public void run() {
-		try {
-			this.clientObjectOutput = new ObjectOutputStream(this.client.getOutputStream());
-			this.clientObjectOutput.flush();
-			this.clientObjectInput = new ObjectInputStream(this.client.getInputStream());
+    @Override
+    public void run() {
+        try {
+            this.clientObjectOutput = new ObjectOutputStream(this.client.getOutputStream());
+            this.clientObjectOutput.flush();
+            this.clientObjectInput = new ObjectInputStream(this.client.getInputStream());
 
-		} catch (IOException e) {
-			System.out.println("Could not create input or output stream: " + e.getMessage());
-		}
+        } catch (IOException e) {
+            System.out.println("Could not create input or output stream: " + e.getMessage());
+        }
 
-		this.running = true;
-		InetAddress inetAddress = this.client.getInetAddress();
-		System.out.println("Client connected: " + inetAddress.getHostName() + ", " + inetAddress.getHostAddress() + ".");
+        this.running = true;
+        InetAddress inetAddress = this.client.getInetAddress();
+        System.out.println("Client connected: " + inetAddress.getHostName() + ", " + inetAddress.getHostAddress() + ".");
 
 		try {
 			while (this.running) {

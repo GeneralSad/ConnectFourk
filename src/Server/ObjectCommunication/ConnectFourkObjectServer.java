@@ -48,6 +48,9 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 
 	@Override
 	public void objectMessageReceived(Object object) {
-
+		for (CFObjectServerTask client : clients)
+		{
+			client.sendMessage(object);
+		}
 	}
 }
