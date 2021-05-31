@@ -15,6 +15,7 @@ public class ConnectFourDataObject implements Serializable {
 		this.discLocations= new Disc[7][6];
 		this.requestReset = null;
 		this.reset = false;
+		this.winner = Disc.EMPTY;
 	}
 
 	public Disc getRequestReset() {

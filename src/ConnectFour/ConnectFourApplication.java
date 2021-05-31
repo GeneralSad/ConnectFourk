@@ -95,7 +95,7 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 		}
 
 		if (response instanceof ConnectFourDataObject) {
-			if (!this.dataObject.getWinner().equals(Disc.EMPTY)) {
+			if (this.dataObject.getWinner().equals(Disc.EMPTY)) {
 				this.dataObject = (ConnectFourDataObject) response;
 				this.dataManager.setDataObject((ConnectFourDataObject) response);
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
