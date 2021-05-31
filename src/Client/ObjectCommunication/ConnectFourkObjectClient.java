@@ -43,7 +43,7 @@ public class ConnectFourkObjectClient {
 					Object response = this.clientObjectInput.readObject();
 					System.out.println(response);
 					if (response instanceof Disc) {
-					this.callback.objectMessageReceived(response);
+						this.callback.objectMessageReceived(response);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,6 +53,7 @@ public class ConnectFourkObjectClient {
 					try {
 						Object response = this.clientObjectInput.readObject();
 						System.out.println(response);
+						this.callback.objectMessageReceived(response);
 
 					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();
@@ -69,7 +70,7 @@ public class ConnectFourkObjectClient {
 						String message = reader.nextLine();
 						this.clientObjectOutput.writeObject(message);
 						//TODO Send something useful;
-						Thread.sleep(1000);
+						Thread.sleep(100);
 					} catch (IOException | InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -81,8 +82,12 @@ public class ConnectFourkObjectClient {
 		}
 	}
 
-	public void sendMessage(String message) {
-
+	public void sendObjectMessage(Object message) {
+		try {
+			this.clientObjectOutput.writeObject(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void close() {

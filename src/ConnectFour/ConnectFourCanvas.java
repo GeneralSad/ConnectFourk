@@ -53,7 +53,9 @@ public class ConnectFourCanvas {
 		}
 	}
 
-	public void setDiscLocations(Disc[][] discLocations) {
+
+	public void updateDiscLocations(Disc[][] discLocations) {
 		this.discLocations = discLocations;
+		draw(new FXGraphics2D(canvas.getGraphicsContext2D()));
 	}
 }

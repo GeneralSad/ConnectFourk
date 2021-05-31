@@ -15,16 +15,20 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 	private BorderPane borderPane;
 	private ConnectFourCanvas canvas;
 	private ConnectFourDataManager dataManager;
+	private ConnectFourDataObject dataObject;
+
+	private ConnectFourkObjectClient client;
 
 	//should probably be temporary
 	private Disc playerColor;
 
 	public ConnectFourApplication() {
 		this.borderPane = new BorderPane();
-		this.dataManager = new ConnectFourDataManager();
-		this.canvas = new ConnectFourCanvas(this.borderPane, this.dataManager.getDiscLocations());
-		ConnectFourkObjectClient client = new ConnectFourkObjectClient("localhost", 27272, this);
-		client.startClient();
+		this.dataObject = new ConnectFourDataObject();
+		this.dataManager = new ConnectFourDataManager(this.dataObject);
+		this.canvas = new ConnectFourCanvas(this.borderPane, this.dataObject.getDiscLocations());
+		this.client = new ConnectFourkObjectClient("localhost", 27272, this);
+		this.client.startClient();
 	}
 
 	@Override
@@ -42,8 +46,11 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 			Button button = new Button("drop: " + (i + 1));
 			int xValue = i;
 			button.setOnAction(event -> {
-				this.dataManager.dropDisc(xValue, this.playerColor);
-				this.canvas.updateCanvas();
+				if (dataObject.getTurn().equals(this.playerColor)) {
+					this.dataManager.dropDisc(xValue, this.playerColor);
+					this.canvas.updateDiscLocations(dataObject.getDiscLocations());
+					this.client.sendObjectMessage(this.dataObject);
+				}
 			});
 			hBox.getChildren().add(button);
 		}
@@ -54,6 +61,12 @@ public class ConnectFourApplication extends Application implements ObjectRespons
 	public void objectMessageReceived(Object response) {
 		if (response instanceof Disc) {
 			this.playerColor = (Disc) response;
+		}
+
+		if (response instanceof ConnectFourDataObject) {
+			this.dataObject = (ConnectFourDataObject) response;
+			this.dataManager.setDataObject((ConnectFourDataObject) response);
+			this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 		}
 	}
 }

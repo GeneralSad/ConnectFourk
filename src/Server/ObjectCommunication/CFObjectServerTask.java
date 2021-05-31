@@ -36,8 +36,7 @@ public class CFObjectServerTask implements Runnable{
 			while (this.running) {
 				Object responseObject = this.clientObjectInput.readObject();
 				System.out.println(responseObject);
-				//TODO Do something with this.
-				//this.callback.objectMessageReceived();
+				this.callback.objectMessageReceived(responseObject);
 			}
 		} catch (IOException e) {
 			System.out.println("Could not send or receive messages.");

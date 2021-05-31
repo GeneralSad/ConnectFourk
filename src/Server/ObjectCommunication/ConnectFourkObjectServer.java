@@ -1,5 +1,6 @@
 package Server.ObjectCommunication;
 
+import ConnectFour.ConnectFourDataObject;
 import ConnectFour.Disc;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.List;
 public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	private int port;
 	List<CFObjectServerTask> clients;
+	private Disc turn = Disc.RED;
 
 	private boolean running;
 
@@ -48,9 +50,28 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 
 	@Override
 	public void objectMessageReceived(Object object) {
-		for (CFObjectServerTask client : clients)
-		{
-			client.sendObjectToClient(object);
+		System.out.println("Received: " + object);
+		if (object instanceof ConnectFourDataObject) {
+			if (((ConnectFourDataObject) object).getTurn().equals(this.turn)) {
+				changeTurns();
+				((ConnectFourDataObject) object).setTurn(this.turn);
+				for (CFObjectServerTask client : clients)
+				{
+					client.sendObjectToClient(object);
+				}
+			} else return;
+		}
+//		for (CFObjectServerTask client : clients)
+//		{
+//			client.sendObjectToClient(object);
+//		}
+	}
+
+	private void changeTurns() {
+		if (this.turn.equals(Disc.RED)) {
+			this.turn = Disc.YELLOW;
+		} else {
+			this.turn = Disc.RED;
 		}
 	}
 }
