@@ -63,6 +63,16 @@ public class ConnectFourCanvas {
 		}
 	}
 
+	public void drawWinTekst(String text) {
+		FXGraphics2D graphics2D = new FXGraphics2D(this.canvas.getGraphicsContext2D());
+		Font font = new Font("Arial", Font.PLAIN, 100);
+		graphics2D.setColor(Color.black);
+		Shape shape = font.createGlyphVector(graphics2D.getFontRenderContext(), text).getOutline();
+		System.out.println(this.canvas.getHeight()/2 + ", height" + this.canvas.getHeight()/2);
+		graphics2D.draw(AffineTransform.getTranslateInstance(this.canvas.getWidth()/4,this.canvas.getHeight()/2).createTransformedShape(shape));
+	}
+
+
 
 	public void updateDiscLocations(Disc[][] discLocations) {
 		this.discLocations = discLocations;
