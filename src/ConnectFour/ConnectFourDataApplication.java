@@ -34,6 +34,7 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 	private Disc playerColor;
 	private TextArea messageArea;
 	private Label turnText;
+	private Label playerText;
 
 	public ConnectFourDataApplication() {
 		this.borderPane = new BorderPane();
@@ -51,23 +52,28 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 		primaryStage.setTitle("Connect 4");
 		primaryStage.setMinWidth(870);
 		primaryStage.setMinHeight(600);
-		//primaryStage.setResizable(false);
+		primaryStage.setResizable(false);
 		primaryStage.show();
 
-		this.turnText = new Label("Turn: \n" + this.dataObject.getTurn());
-		turnText.setWrapText(true);
-		turnText.setPadding(new Insets(0, 10, 0, 10));
-		turnText.setFont(new Font(30));
+		this.playerText = new Label("You are: " + this.playerColor);
+		this.playerText.setPadding(new Insets(0, 10, 0, 10));
+		this.playerText.setFont(new Font(15));
+
+		this.turnText = new Label("Turn: " + this.dataObject.getTurn());
+		this.turnText.setPadding(new Insets(0, 10, 0, 10));
+		this.turnText.setFont(new Font(15));
 
 		VBox frame = new VBox();
 		frame.setAlignment(Pos.TOP_LEFT);
+		frame.getChildren().add(playerText);
 		frame.getChildren().add(turnText);
 
 		this.messageArea = new TextArea();
-		messageArea.setEditable(false);
-		messageArea.setWrapText(true);
-		messageArea.setMaxWidth(151);
-		messageArea.setMinWidth(150);
+		this.messageArea.setEditable(false);
+		this.messageArea.setWrapText(true);
+		this.messageArea.setMaxWidth(151);
+		this.messageArea.setMinWidth(150);
+
 		frame.getChildren().add(messageArea);
 
 
@@ -98,12 +104,16 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 
 			int xValue = i;
 			button.setOnAction(event -> {
-				if (this.dataObject.getTurn().equals(this.playerColor)) {
+				if (this.dataObject.getTurn().equals(this.playerColor) && this.dataObject.getWinner().equals(Disc.EMPTY)) {
 					this.dataManager.dropDisc(xValue, this.playerColor);
 					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 
 					this.client.sendMessage("DROP " + this.playerColor + " " +  xValue);
 					setTurn(getOtherPlayerColor(this.playerColor));
+
+					if (this.dataObject.getWinner() != Disc.EMPTY) {
+						this.client.sendMessage("WIN " + this.playerColor);
+					}
 
 				}
 			});
@@ -134,12 +144,17 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 
 	}
 
+	@Override
+	public void stop() {
+		this.client.close();
+	}
+
 	public void setTurn(Disc turn) {
 		this.dataObject.setTurn(turn);
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				turnText.setText("Turn:\n" + turn);
+				turnText.setText("Turn: " + turn);
 			}
 		});
 	}
@@ -152,7 +167,13 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 		switch (commands[0]) {
 			case "DISC":
 					this.playerColor = Disc.valueOf(commands[1]);
-					System.out.println(this.playerColor);
+
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						playerText.setText("You are: " + playerColor);
+					}
+				});
 
 				break;
 			case "DROP":
@@ -164,6 +185,7 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 				break;
 			case "MESSAGE":
 					this.messageArea.setText(this.messageArea.getText() + message.substring(8) + "\n");
+					this.messageArea.selectPositionCaret(this.messageArea.getLength());
 				break;
 			case "WANTRESET":
 					if (!commands[1].equals(this.playerColor.toString())) {
@@ -174,6 +196,12 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 				this.dataManager.resetConnectFourBoard();
 				this.canvas.updateCanvas();
 				this.dataObject.resetDataObject();
+				break;
+			case "WIN":
+				this.dataObject.setWinner(Disc.valueOf(commands[1]));
+				this.messageArea.setText(this.messageArea.getText() + this.dataObject.getWinner() + " has won!\n");
+				this.canvas.drawWinTekst(this.dataObject.getWinner() + " WON");
+				break;
 		}
 	}
 

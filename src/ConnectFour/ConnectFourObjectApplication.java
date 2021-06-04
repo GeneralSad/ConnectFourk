@@ -105,6 +105,8 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 					this.dataManager.dropDisc(xValue, this.playerColor);
 					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 					this.client.sendObjectMessage(this.dataObject);
+
+
 				}
 			});
 			hBox.getChildren().add(button);

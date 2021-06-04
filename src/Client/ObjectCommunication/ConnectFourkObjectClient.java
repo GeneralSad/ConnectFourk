@@ -70,6 +70,7 @@ public class ConnectFourkObjectClient {
 			this.running = false;
 			this.clientObjectInput.close();
 			this.socket.close();
+			this.clientObjectOutput.close();
 
 		} catch (IOException e) {
 			System.out.println("Could not close something: " + e.getMessage());

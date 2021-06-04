@@ -63,6 +63,7 @@ public class ConnectFourkDataClient {
 
 	public void close() {
 		try {
+			this.running = false;
 			this.clientDataInput.close();
 			this.socket.close();
 			this.clientDataOutput.close();
