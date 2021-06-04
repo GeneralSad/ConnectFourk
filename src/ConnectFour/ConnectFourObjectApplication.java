@@ -80,7 +80,6 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 			if (event.getCode() == KeyCode.ENTER) {
 
 				//TODO send messages?
-				messageArea.setText(messageArea.getText() + playerColor + ": " + messageField.getText() + "\n");
 				this.client.sendObjectMessage(playerColor+ ": " + messageField.getText());
 				messageField.clear();
 
@@ -119,11 +118,19 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 
 		resetButton.setOnAction(event -> {
 
-			//TODO Send and receive message for reset
-			VBox scoreBox = (VBox) borderPane.getRight();
-			TextArea textArea = (TextArea)scoreBox.getChildren().get(1);
-			textArea.setText(textArea.getText() + playerColor + " asks for a reset!\n");
-			textArea.setText(textArea.getText() + playerColor + " agrees!\n");
+			if (!this.dataObject.getRequestReset().equals(Disc.EMPTY) && !this.dataObject.getRequestReset().equals(this.playerColor)) {
+				this.dataManager.resetConnectFourBoard();
+				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+				this.dataObject.setRequestReset(Disc.EMPTY);
+				this.client.sendObjectMessage(this.dataObject);
+				this.client.sendObjectMessage(this.playerColor + " agreed to the reset!");
+			} else {
+				this.dataObject.setRequestReset(this.playerColor);
+				this.client.sendObjectMessage(this.dataObject);
+				this.client.sendObjectMessage(this.playerColor + " asks for a reset!");
+			}
+
+
 
 		});
 
@@ -152,6 +159,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 
 				this.turn = this.dataObject.getTurn();
+
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
@@ -160,14 +168,14 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 				});
 			} else {
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-				this.messageArea.setText(messageArea.getText() + this.dataObject.getWinner() + " has won!\n");
+				this.client.sendObjectMessage("GAME: " + this.dataObject.getWinner() + " has won!");
 			}
 		}
 
 		if (response instanceof String) {
-			if (this.playerColor != Disc.valueOf(((String) response).substring(0,((String) response).indexOf(":")))){
-				messageArea.setText(messageArea.getText() + response + "\n");
-			}
+			this.messageArea.setText(messageArea.getText() + response + "\n");
+			this.messageArea.selectPositionCaret(this.messageArea.getLength());
+
 		}
 	}
 }

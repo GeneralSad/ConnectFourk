@@ -13,7 +13,7 @@ public class ConnectFourDataObject implements Serializable {
 	public ConnectFourDataObject() {
 		this.turn = Disc.RED;
 		this.discLocations= new Disc[7][6];
-		this.requestReset = null;
+		this.requestReset = Disc.EMPTY;
 		this.reset = false;
 		this.winner = Disc.EMPTY;
 	}

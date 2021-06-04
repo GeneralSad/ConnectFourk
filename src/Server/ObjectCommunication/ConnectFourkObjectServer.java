@@ -11,14 +11,17 @@ import java.util.List;
 
 public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	private int port;
+
 	List<CFObjectServerTask> clients;
 	private Disc turn = Disc.RED;
+	private ConnectFourDataObject dataObject;
 
 	private boolean running;
 
 	public ConnectFourkObjectServer(int port) {
 		this.port = port;
 		this.clients = new ArrayList<>();
+		this.dataObject = new ConnectFourDataObject();
 	}
 
 	public void startServer() {
@@ -52,6 +55,17 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	public void objectMessageReceived(Object object) {
 		System.out.println("Received: " + object);
 		if (object instanceof ConnectFourDataObject) {
+			if (!this.dataObject.getRequestReset().equals(((ConnectFourDataObject) object).getRequestReset()) &&
+					this.dataObject.getDiscLocations() == ((ConnectFourDataObject) object).getDiscLocations()) {
+
+				for (CFObjectServerTask client : clients)
+				{
+					client.sendObjectToClient(object);
+				}
+				this.dataObject = ((ConnectFourDataObject) object);
+				return;
+			}
+
 			if (((ConnectFourDataObject) object).getTurn().equals(this.turn)) {
 				changeTurns();
 				((ConnectFourDataObject) object).setTurn(this.turn);
@@ -59,7 +73,10 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 				{
 					client.sendObjectToClient(object);
 				}
+				this.dataObject = ((ConnectFourDataObject) object);
 			}
+
+
 		}
 
 		if (object instanceof String) {
@@ -67,10 +84,6 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 				client.sendObjectToClient(object);
 			}
 		}
-//		for (CFObjectServerTask client : clients)
-//		{
-//			client.sendObjectToClient(object);
-//		}
 	}
 
 	private void changeTurns() {
