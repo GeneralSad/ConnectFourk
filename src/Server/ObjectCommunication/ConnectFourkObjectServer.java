@@ -57,28 +57,23 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 		System.out.println("Received: " + object);
 		if (object instanceof ConnectFourDataObject) {
 
-			if (!this.dataObject.getRequestReset().equals(((ConnectFourDataObject) object).getRequestReset()) &&
-					Arrays.deepEquals(this.dataObject.getDiscLocations(), ((ConnectFourDataObject) object).getDiscLocations())) {
-
-				sendObjectToClients(object);
-				this.dataObject = ((ConnectFourDataObject) object);
-				return;
-			}
 			if (((ConnectFourDataObject) object).getTurn().equals(this.turn) &&
 					!Arrays.deepEquals(this.dataObject.getDiscLocations(), ((ConnectFourDataObject) object).getDiscLocations())) {
 				changeTurns();
 				((ConnectFourDataObject) object).setTurn(this.turn);
 				sendObjectToClients(object);
 				this.dataObject = ((ConnectFourDataObject) object);
+			} else {
+				sendObjectToClients(object);
+				this.dataObject = ((ConnectFourDataObject) object);
+				this.turn = dataObject.getTurn();
 			}
 
 
 		}
 
 		if (object instanceof String) {
-			for (CFObjectServerTask client : clients) {
-				client.sendObjectToClient(object);
-			}
+			sendObjectToClients(object);
 		}
 	}
 

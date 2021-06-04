@@ -45,6 +45,10 @@ public class CFObjectServerTask implements Runnable{
 			e.printStackTrace();
 		}
 
+		close();
+	}
+
+	public void close() {
 		try {
 			this.clientObjectInput.close();
 			this.clientObjectOutput.close();

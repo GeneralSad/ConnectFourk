@@ -36,16 +36,6 @@ public class ConnectFourkObjectClient {
 
 			this.running = true;
 			new Thread(() -> {
-				try {
-					Object response = this.clientObjectInput.readObject();
-					System.out.println("response: " + response);
-					if (response instanceof Disc) {
-						this.callback.objectMessageReceived(response);
-					}
-				} catch (IOException | ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-
 				while (this.running) {
 					try {
 						Object response = this.clientObjectInput.readObject();
@@ -56,7 +46,7 @@ public class ConnectFourkObjectClient {
 						e.printStackTrace();
 					}
 				}
-
+				close();
 			}).start();
 		} catch (IOException e) {
 			System.out.println("Could not connect to the server: " + e.getMessage());
@@ -66,17 +56,20 @@ public class ConnectFourkObjectClient {
 	public void sendObjectMessage(Object message) {
 		try {
 			this.clientObjectOutput.writeObject(message);
+			System.out.println("message: " + message);
 			Thread.sleep(200);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
+
+
 	public void close() {
 		try {
+			this.running = false;
 			this.clientObjectInput.close();
 			this.socket.close();
-			this.clientObjectOutput.close();
 
 		} catch (IOException e) {
 			System.out.println("Could not close something: " + e.getMessage());

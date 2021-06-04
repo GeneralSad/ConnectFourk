@@ -8,20 +8,20 @@ public class ConnectFourDataObject implements Serializable {
 	private Disc[][] discLocations;
 	private Disc requestReset;
 	private Disc winner;
-	private boolean reset;
+	private boolean gameDone;
 
 	public ConnectFourDataObject() {
 		this.turn = Disc.RED;
 		this.discLocations= new Disc[7][6];
 		this.requestReset = Disc.EMPTY;
-		this.reset = false;
+		this.gameDone = false;
 		this.winner = Disc.EMPTY;
 	}
 
 	public void resetDataObject() {
 		this.turn = Disc.RED;
 		this.requestReset = Disc.EMPTY;
-		this.reset = false;
+		this.gameDone = false;
 		this.winner = Disc.EMPTY;
 	}
 
@@ -41,6 +41,10 @@ public class ConnectFourDataObject implements Serializable {
 		return this.winner;
 	}
 
+	public boolean isGameDone() {
+		return this.gameDone;
+	}
+
 	public void setDiscLocations(Disc[][] discLocations) {
 		this.discLocations = discLocations;
 	}
@@ -55,6 +59,10 @@ public class ConnectFourDataObject implements Serializable {
 
 	public void setWinner(Disc winner) {
 		this.winner = winner;
+	}
+
+	public void setGameDone(boolean gameDone) {
+		this.gameDone = gameDone;
 	}
 }
 
