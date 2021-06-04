@@ -56,6 +56,7 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	public void objectMessageReceived(Object object) {
 		System.out.println("Received: " + object);
 		if (object instanceof ConnectFourDataObject) {
+
 			if (!this.dataObject.getRequestReset().equals(((ConnectFourDataObject) object).getRequestReset()) &&
 					Arrays.deepEquals(this.dataObject.getDiscLocations(), ((ConnectFourDataObject) object).getDiscLocations())) {
 

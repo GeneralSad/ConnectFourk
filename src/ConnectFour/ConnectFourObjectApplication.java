@@ -184,8 +184,8 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 			if (!this.dataObject.getRequestReset().equals(this.playerColor)) {
 				if (!this.dataObject.getRequestReset().equals(Disc.EMPTY)) {
 					this.dataManager.resetConnectFourBoard();
+					this.dataObject.resetDataObject();
 					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-					this.dataObject.setRequestReset(Disc.EMPTY);
 					this.client.sendObjectMessage(this.dataObject);
 					this.client.sendObjectMessage(this.playerColor + " agreed to the reset!");
 				} else {
