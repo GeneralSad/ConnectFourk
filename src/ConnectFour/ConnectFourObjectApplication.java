@@ -1,5 +1,6 @@
 package ConnectFour;
 
+import Client.ObjectCommunication.ConnectFourWinCanvas;
 import Client.ObjectCommunication.ConnectFourkObjectClient;
 import Server.ObjectCommunication.ObjectResponseCallback;
 import javafx.application.Application;
@@ -35,8 +36,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 	private Label turnText;
 	private Label playerText;
 
-	private TextArea winMessageArea;
-	private BorderPane winPane;
+	private ConnectFourWinCanvas winCanvas;
 
 	private Stage primaryStage;
 
@@ -98,59 +98,6 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 		borderPane.setRight(frame);
 
 		this.primaryStage = primaryStage;
-
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		this.winPane = new BorderPane();
-
-		Label winLabel = new Label();
-
-		if (playerColor == dataObject.getWinner()) {
-			winLabel.setText("You won!");
-		} else {
-			winLabel.setText("You lost!");
-		}
-
-		Button rematchButton = new Button("Rematch");
-
-		rematchButton.setOnAction(event -> {
-
-			if (!this.dataObject.getRequestReset().equals(Disc.EMPTY) && !this.dataObject.getRequestReset().equals(this.playerColor)) {
-				this.dataManager.resetConnectFourBoard();
-				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-				this.dataObject.setRequestReset(Disc.EMPTY);
-				this.client.sendObjectMessage(this.dataObject);
-				this.client.sendObjectMessage(this.playerColor + " agreed to the reset!");
-			} else {
-				this.dataObject.setRequestReset(this.playerColor);
-				this.client.sendObjectMessage(this.dataObject);
-				this.client.sendObjectMessage(this.playerColor + " asks for a reset!");
-			}
-
-		});
-
-		this.winMessageArea = new TextArea(this.messageArea.getText());
-		TextField winMessageField = new TextField();
-
-		VBox vBox = new VBox();
-		vBox.getChildren().add(this.winMessageArea);
-		vBox.getChildren().add(winMessageField);
-
-		winPane.setRight(vBox);
-		winPane.setCenter(rematchButton);
-		winPane.setTop(winLabel);
-
-		winMessageField.setOnKeyPressed(event -> {
-
-			if (event.getCode() == KeyCode.ENTER) {
-
-				//TODO send messages?
-				this.client.sendObjectMessage(playerColor+ ": " + winMessageField.getText());
-				winMessageField.clear();
-
-			}
-
-		});
 
 	}
 
@@ -224,6 +171,8 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 				this.turn = this.dataObject.getTurn();
 
+				this.winCanvas = new ConnectFourWinCanvas(playerColor, dataObject, dataManager, client, canvas);
+
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
@@ -235,10 +184,8 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 				messageArea.setText(messageArea.getText() + dataObject.getWinner() + " has won!\n");
 				this.client.sendObjectMessage("GAME: " + this.dataObject.getWinner() + " has won!");
 
-				//Scene scene = new Scene(winPane);
-				//this.primaryStage.getScene(scene);
-				this.primaryStage.getScene().setRoot(winPane);
-				//this.primaryStage.show();
+				winCanvas.construct();
+				this.primaryStage.getScene().setRoot(winCanvas.getWinPane());
 
 			}
 		}
@@ -249,8 +196,9 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 				this.messageArea.setText(messageArea.getText() + response + "\n");
 				this.messageArea.selectPositionCaret(this.messageArea.getLength());
 			} else {
-				this.winMessageArea.setText(winMessageArea.getText() + response + "\n");
-				this.winMessageArea.selectPositionCaret(this.winMessageArea.getLength());
+				this.winCanvas.construct();
+				this.winCanvas.getMessageArea().setText(this.winCanvas.getMessageArea().getText() + response + "\n");
+				this.winCanvas.getMessageArea().selectPositionCaret(this.winCanvas.getMessageArea().getLength());
 			}
 
 		}
