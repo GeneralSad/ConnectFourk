@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ConnectFourkObjectServer implements ObjectResponseCallback {
@@ -56,23 +57,17 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 		System.out.println("Received: " + object);
 		if (object instanceof ConnectFourDataObject) {
 			if (!this.dataObject.getRequestReset().equals(((ConnectFourDataObject) object).getRequestReset()) &&
-					this.dataObject.getDiscLocations() == ((ConnectFourDataObject) object).getDiscLocations()) {
+					Arrays.deepEquals(this.dataObject.getDiscLocations(), ((ConnectFourDataObject) object).getDiscLocations())) {
 
-				for (CFObjectServerTask client : clients)
-				{
-					client.sendObjectToClient(object);
-				}
+				sendObjectToClients(object);
 				this.dataObject = ((ConnectFourDataObject) object);
 				return;
 			}
-
-			if (((ConnectFourDataObject) object).getTurn().equals(this.turn)) {
+			if (((ConnectFourDataObject) object).getTurn().equals(this.turn) &&
+					!Arrays.deepEquals(this.dataObject.getDiscLocations(), ((ConnectFourDataObject) object).getDiscLocations())) {
 				changeTurns();
 				((ConnectFourDataObject) object).setTurn(this.turn);
-				for (CFObjectServerTask client : clients)
-				{
-					client.sendObjectToClient(object);
-				}
+				sendObjectToClients(object);
 				this.dataObject = ((ConnectFourDataObject) object);
 			}
 
@@ -83,6 +78,13 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 			for (CFObjectServerTask client : clients) {
 				client.sendObjectToClient(object);
 			}
+		}
+	}
+
+	private void sendObjectToClients(Object o) {
+		for (CFObjectServerTask client : clients)
+		{
+			client.sendObjectToClient(o);
 		}
 	}
 

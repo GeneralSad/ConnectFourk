@@ -66,7 +66,8 @@ public class ConnectFourkObjectClient {
 	public void sendObjectMessage(Object message) {
 		try {
 			this.clientObjectOutput.writeObject(message);
-		} catch (IOException e) {
+			Thread.sleep(200);
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

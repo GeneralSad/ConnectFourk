@@ -102,7 +102,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 
 			int xValue = i;
 			button.setOnAction(event -> {
-				if (this.dataObject.getTurn().equals(this.playerColor)) {
+				if (this.dataObject.getTurn().equals(this.playerColor) && this.dataObject.getWinner().equals(Disc.EMPTY)) {
 					this.dataManager.dropDisc(xValue, this.playerColor);
 					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 					this.client.sendObjectMessage(this.dataObject);
@@ -118,20 +118,19 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 
 		resetButton.setOnAction(event -> {
 
-			if (!this.dataObject.getRequestReset().equals(Disc.EMPTY) && !this.dataObject.getRequestReset().equals(this.playerColor)) {
-				this.dataManager.resetConnectFourBoard();
-				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-				this.dataObject.setRequestReset(Disc.EMPTY);
-				this.client.sendObjectMessage(this.dataObject);
-				this.client.sendObjectMessage(this.playerColor + " agreed to the reset!");
-			} else {
-				this.dataObject.setRequestReset(this.playerColor);
-				this.client.sendObjectMessage(this.dataObject);
-				this.client.sendObjectMessage(this.playerColor + " asks for a reset!");
+			if (!this.dataObject.getRequestReset().equals(this.playerColor)) {
+				if (!this.dataObject.getRequestReset().equals(Disc.EMPTY)) {
+					this.dataManager.resetConnectFourBoard();
+					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+					this.dataObject.setRequestReset(Disc.EMPTY);
+					this.client.sendObjectMessage(this.dataObject);
+					this.client.sendObjectMessage(this.playerColor + " agreed to the reset!");
+				} else {
+					this.dataObject.setRequestReset(this.playerColor);
+					this.client.sendObjectMessage(this.dataObject);
+					this.client.sendObjectMessage(this.playerColor + " asks for a reset!");
+				}
 			}
-
-
-
 		});
 
 	}

@@ -55,7 +55,8 @@ public class ConnectFourkDataClient {
 	public void sendMessage(String message) {
 		try {
 			this.clientDataOutput.writeUTF(message);
-		} catch (IOException e) {
+			Thread.sleep(200);
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
