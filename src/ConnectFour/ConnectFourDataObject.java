@@ -18,6 +18,13 @@ public class ConnectFourDataObject implements Serializable {
 		this.winner = Disc.EMPTY;
 	}
 
+	public void resetDataObject() {
+		this.turn = Disc.RED;
+		this.requestReset = Disc.EMPTY;
+		this.reset = false;
+		this.winner = Disc.EMPTY;
+	}
+
 	public Disc getRequestReset() {
 		return this.requestReset;
 	}

@@ -77,9 +77,6 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 		messageField.setOnKeyPressed(event -> {
 
 			if (event.getCode() == KeyCode.ENTER) {
-
-				//TODO send messages?
-				this.messageArea.setText(this.messageArea.getText() + this.playerColor + ": " + messageField.getText() + "\n");
 				this.client.sendMessage("MESSAGE " + this.playerColor + ": " + messageField.getText());
 				messageField.clear();
 
@@ -121,11 +118,18 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 		resetButton.setOnAction(event -> {
 
 			//TODO Send and receive message for reset
-			VBox scoreBox = (VBox) borderPane.getRight();
-			TextArea textArea = (TextArea)scoreBox.getChildren().get(1);
-			textArea.setText(textArea.getText() + playerColor + " asks for a reset!\n");
-			textArea.setText(textArea.getText() + playerColor + " agrees!\n");
+			if (this.dataObject.getRequestReset().equals(Disc.EMPTY)) {
+				this.client.sendMessage("MESSAGE " + this.playerColor + " asks for a reset!");
+				this.dataObject.setRequestReset(this.playerColor);
+				this.client.sendMessage("WANTRESET " + this.playerColor);
+			} else if (!this.dataObject.getRequestReset().equals(this.playerColor)) {
+				this.client.sendMessage("MESSAGE " + this.playerColor + " agreed!");
+				this.dataManager.resetConnectFourBoard();
+				this.canvas.updateCanvas();
+				this.dataObject.resetDataObject();
+				this.client.sendMessage("RESET");
 
+			}
 		});
 
 	}
@@ -138,45 +142,38 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 				turnText.setText("Turn:\n" + turn);
 			}
 		});
-
 	}
-
-//	@Override
-//	public void objectMessageReceived(Object response) {
-//		if (response instanceof Disc) {
-//			this.playerColor = (Disc) response;
-//		}
-//
-//		if (response instanceof ConnectFourDataObject) {
-//			if (this.dataObject.getWinner().equals(Disc.EMPTY)) {
-//				this.dataObject = (ConnectFourDataObject) response;
-//				this.dataManager.setDataObject((ConnectFourDataObject) response);
-//				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-//			}
-//		}
-//	}
 
 	@Override
 	public void stringMessageReceived(String message) {
 		String[] commands = message.split(" ");
 		System.out.println(Arrays.toString(commands));
 
-		if (commands[0].equals("DISC")) {
+		switch (commands[0]) {
+			case "DISC":
+					this.playerColor = Disc.valueOf(commands[1]);
+					System.out.println(this.playerColor);
 
-			this.playerColor = Disc.valueOf(commands[1]);
-
-			System.out.println(this.playerColor);
-		}
-
-		if (commands[0].equals("DROP") && !commands[1].equals(this.playerColor.toString())) {
-			this.dataManager.dropDisc(Integer.parseInt(commands[2]), Disc.valueOf(commands[1]));
-			this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-			setTurn(this.playerColor);
-
-		}
-
-		if (commands[0].equals("MESSAGE") && Disc.valueOf(commands[1].substring(0, commands[1].length() - 1)) != this.playerColor) {
-			this.messageArea.setText(this.messageArea.getText() + message.substring(8) + "\n");
+				break;
+			case "DROP":
+					if (!commands[1].equals(this.playerColor.toString())) {
+						this.dataManager.dropDisc(Integer.parseInt(commands[2]), Disc.valueOf(commands[1]));
+						this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
+						setTurn(this.playerColor);
+					}
+				break;
+			case "MESSAGE":
+					this.messageArea.setText(this.messageArea.getText() + message.substring(8) + "\n");
+				break;
+			case "WANTRESET":
+					if (!commands[1].equals(this.playerColor.toString())) {
+						this.dataObject.setRequestReset(Disc.valueOf(commands[1]));
+					}
+				break;
+			case "RESET":
+				this.dataManager.resetConnectFourBoard();
+				this.canvas.updateCanvas();
+				this.dataObject.resetDataObject();
 		}
 	}
 
