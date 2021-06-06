@@ -102,7 +102,7 @@ public class ConnectFourDataManager {
 			if (i == 3) {
 				continue;
 			}
-			if (!(xLocation + (3 - i) > 5) && !(xLocation + (3 - i) < 0) && !(yLocation + (3 - i) > 5) && !(yLocation + (3 - i) < 0)) {
+			if (!(xLocation + (3 - i) > 6) && !(xLocation + (3 - i) < 0) && !(yLocation + (3 - i) > 5) && !(yLocation + (3 - i) < 0)) {
 				if (discLocations[xLocation + (3 - i)][yLocation + (3 - i)] == discColor) {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {
@@ -128,7 +128,7 @@ public class ConnectFourDataManager {
 			if (i == 3) {
 				continue;
 			}
-			if (!(xLocation - (3 - i) > 5) && !(xLocation - (3 - i) < 0) && !(yLocation + (3 - i) > 5) && !(yLocation + (3 - i) < 0)) {
+			if (!(xLocation - (3 - i) > 6) && !(xLocation - (3 - i) < 0) && !(yLocation + (3 - i) > 5) && !(yLocation + (3 - i) < 0)) {
 				if (discLocations[xLocation - (3 - i)][yLocation + (3 - i)] == discColor) {
 					discsWithSameColor++;
 					if (discsWithSameColor >= 3) {

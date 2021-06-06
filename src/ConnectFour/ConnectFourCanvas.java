@@ -37,7 +37,6 @@ public class ConnectFourCanvas {
 				Shape shape = this.ellipse2DS[x][5 - y];
 				graphics.setColor(Color.BLACK);
 				graphics.draw(shape);
-				//The disk array is in Y X format due to that making more sense for checking where a disk will drop!!
 				switch (this.discLocations[x][5 - y]) {
 					case EMPTY:
 						graphics.setColor(Color.white);
