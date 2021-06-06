@@ -55,7 +55,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 		this.playerText.setFont(new Font(15));
 
 		this.turnText = new Label("Turn: " + this.dataObject.getTurn());
-		this.turnText.setPadding(new Insets(0, 10, 0, 10));
+		this.turnText.setPadding(new Insets(0, 10, 5, 10));
 		this.turnText.setFont(new Font(15));
 
 		VBox frame = new VBox();

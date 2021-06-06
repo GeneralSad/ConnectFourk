@@ -60,7 +60,7 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 		this.playerText.setFont(new Font(15));
 
 		this.turnText = new Label("Turn: " + this.dataObject.getTurn());
-		this.turnText.setPadding(new Insets(0, 10, 0, 10));
+		this.turnText.setPadding(new Insets(0, 10, 5, 10));
 		this.turnText.setFont(new Font(15));
 
 		VBox frame = new VBox();
@@ -196,6 +196,7 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 				this.dataManager.resetConnectFourBoard();
 				this.canvas.updateCanvas();
 				this.dataObject.resetDataObject();
+				setTurn(Disc.RED);
 				break;
 			case "WIN":
 				this.dataObject.setWinner(Disc.valueOf(commands[1]));
