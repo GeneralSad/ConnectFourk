@@ -172,7 +172,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 
 		if (response instanceof String) {
 			this.messageArea.setText(this.messageArea.getText() + response + "\n");
-			this.messageArea.selectPositionCaret(this.messageArea.getLength());
+			this.messageArea.positionCaret(this.messageArea.getLength());
 		}
 	}
 

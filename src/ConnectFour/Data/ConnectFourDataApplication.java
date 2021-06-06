@@ -172,7 +172,7 @@ public class ConnectFourDataApplication extends Application implements DataRespo
 			case "MESSAGE":
 
 				this.messageArea.setText(this.messageArea.getText() + message.substring(8) + "\n");
-				this.messageArea.selectPositionCaret(this.messageArea.getLength());
+				this.messageArea.positionCaret(this.messageArea.getLength());
 				break;
 			case "WANTRESET":
 
