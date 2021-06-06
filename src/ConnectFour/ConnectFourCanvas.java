@@ -69,6 +69,8 @@ public class ConnectFourCanvas {
 		Font font = new Font("Arial", Font.PLAIN, 100);
 		Shape shape = font.createGlyphVector(graphics2D.getFontRenderContext(), text).getOutline();
 		graphics2D.setColor(Color.BLACK);
+
+		//We check who won
 		if (text.equals("RED WON")) {
 			shape = AffineTransform.getTranslateInstance(100,this.canvas.getHeight()/2).createTransformedShape(shape);
 			graphics2D.setColor(Color.RED);

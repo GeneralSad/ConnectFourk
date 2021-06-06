@@ -1,6 +1,6 @@
 package Client.ObjectCommunication;
 
-import ConnectFour.ConnectFourObjectApplication;
+import ConnectFour.Object.ConnectFourObjectApplication;
 import javafx.application.Application;
 
 public class ObjectClientMain {

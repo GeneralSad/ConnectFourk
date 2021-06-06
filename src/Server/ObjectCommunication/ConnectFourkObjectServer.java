@@ -9,15 +9,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	private int port;
-
 	List<CFObjectServerTask> clients;
+	private ServerSocket serverSocket;
+	private boolean running;
+	private boolean clientSearchRunning;
+
 	private Disc turn = Disc.RED;
 	private ConnectFourDataObject dataObject;
-
-	private boolean running;
 
 	public ConnectFourkObjectServer(int port) {
 		this.port = port;
@@ -27,10 +29,22 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 
 	public void startServer() {
 		try {
-			ServerSocket serverSocket = new ServerSocket(this.port);
+			this.serverSocket = new ServerSocket(this.port);
 			this.running = true;
+			this.clientSearchRunning = true;
 
-			while (this.running) {
+			Scanner reader = new Scanner(System.in);
+			new Thread(() -> {
+				while (this.running) {
+					System.out.println("Type \"close\" to close the server: ");
+					String response = reader.nextLine();
+					if (response.toLowerCase().equals("close")) {
+						close();
+					}
+				}
+			}).start();
+
+			while (this.clientSearchRunning) {
 				System.out.println("Waiting on clients...");
 				Socket client = serverSocket.accept();
 
@@ -44,6 +58,7 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 				if (this.clients.size() == 2) {
 					this.clients.get(0).sendObjectToClient(Disc.RED);
 					this.clients.get(1).sendObjectToClient(Disc.YELLOW);
+					this.clientSearchRunning = false;
 				}
 			}
 		} catch (IOException e) {
@@ -52,13 +67,28 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 		}
 	}
 
+
+	public void close() {
+		this.running = false;
+		this.clientSearchRunning = false;
+		try {
+			this.serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (CFObjectServerTask client : this.clients) {
+			client.close();
+		}
+	}
+
 	@Override
 	public void objectMessageReceived(Object object) {
-		System.out.println("Received: " + object);
+		System.out.println("Received from client: " + object);
 		if (object instanceof ConnectFourDataObject) {
 
 			if (((ConnectFourDataObject) object).getTurn().equals(this.turn) &&
 					!Arrays.deepEquals(this.dataObject.getDiscLocations(), ((ConnectFourDataObject) object).getDiscLocations())) {
+
 				changeTurns();
 				((ConnectFourDataObject) object).setTurn(this.turn);
 				sendObjectToClients(object);
@@ -68,8 +98,6 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 				this.dataObject = ((ConnectFourDataObject) object);
 				this.turn = dataObject.getTurn();
 			}
-
-
 		}
 
 		if (object instanceof String) {
@@ -78,8 +106,7 @@ public class ConnectFourkObjectServer implements ObjectResponseCallback {
 	}
 
 	private void sendObjectToClients(Object o) {
-		for (CFObjectServerTask client : clients)
-		{
+		for (CFObjectServerTask client : clients) {
 			client.sendObjectToClient(o);
 		}
 	}

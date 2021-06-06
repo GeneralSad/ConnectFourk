@@ -35,8 +35,7 @@ public class CFDataServerTask implements Runnable{
 		try {
 			while (this.running) {
 				String message = this.clientDataInput.readUTF();
-				System.out.println(message);
-				//TODO Do something with this.
+				System.out.println("Received from client: " + message);
 				this.callback.stringMessageReceived(message);
 			}
 		} catch (IOException e) {
@@ -44,6 +43,11 @@ public class CFDataServerTask implements Runnable{
 			e.printStackTrace();
 		}
 
+
+	}
+
+	public void close() {
+		this.running = false;
 		try {
 			this.clientDataInput.close();
 			this.clientDataOutput.close();
@@ -56,6 +60,7 @@ public class CFDataServerTask implements Runnable{
 	public void sendDataToClient(String message) {
 		try {
 			this.clientDataOutput.writeUTF(message);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

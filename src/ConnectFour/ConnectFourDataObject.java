@@ -45,10 +45,6 @@ public class ConnectFourDataObject implements Serializable {
 		return this.gameDone;
 	}
 
-	public void setDiscLocations(Disc[][] discLocations) {
-		this.discLocations = discLocations;
-	}
-
 	public void setTurn(Disc turn) {
 		this.turn = turn;
 	}

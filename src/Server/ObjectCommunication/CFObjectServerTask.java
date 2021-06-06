@@ -35,7 +35,6 @@ public class CFObjectServerTask implements Runnable{
 		try {
 			while (this.running) {
 				Object responseObject = this.clientObjectInput.readObject();
-				System.out.println(responseObject);
 				this.callback.objectMessageReceived(responseObject);
 			}
 		} catch (IOException e) {
@@ -49,6 +48,7 @@ public class CFObjectServerTask implements Runnable{
 	}
 
 	public void close() {
+		this.running = false;
 		try {
 			this.clientObjectInput.close();
 			this.clientObjectOutput.close();

@@ -1,11 +1,8 @@
 package Client.ObjectCommunication;
 
-import ConnectFour.Disc;
 import Server.ObjectCommunication.ObjectResponseCallback;
-
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class ConnectFourkObjectClient {
 	private String host;
@@ -39,11 +36,16 @@ public class ConnectFourkObjectClient {
 				while (this.running) {
 					try {
 						Object response = this.clientObjectInput.readObject();
-						System.out.println("response: " + response);
 						this.callback.objectMessageReceived(response);
+
 
 					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
 					}
 				}
 				close();
@@ -55,8 +57,10 @@ public class ConnectFourkObjectClient {
 
 	public void sendObjectMessage(Object message) {
 		try {
-			this.clientObjectOutput.writeObject(message);
-			System.out.println("message: " + message);
+			if (this.clientObjectOutput != null) {
+				this.clientObjectOutput.writeObject(message);
+				System.out.println("message: " + message);
+			}
 			Thread.sleep(200);
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();

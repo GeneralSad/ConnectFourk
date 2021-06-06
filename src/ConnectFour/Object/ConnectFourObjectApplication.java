@@ -1,6 +1,10 @@
-package ConnectFour;
+package ConnectFour.Object;
 
 import Client.ObjectCommunication.ConnectFourkObjectClient;
+import ConnectFour.ConnectFourCanvas;
+import ConnectFour.ConnectFourDataManager;
+import ConnectFour.ConnectFourDataObject;
+import ConnectFour.Disc;
 import Server.ObjectCommunication.ObjectResponseCallback;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -20,28 +24,27 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 	private BorderPane borderPane;
 	private ConnectFourCanvas canvas;
 	private ConnectFourDataManager dataManager;
-	private Disc turn;
 	private ConnectFourDataObject dataObject;
 	private ConnectFourkObjectClient client;
 
 	private Disc playerColor;
 	private TextArea messageArea;
 	private Label turnText;
+	private Disc turn;
 	private Label playerText;
-
-	private Stage primaryStage;
 
 	public ConnectFourObjectApplication() {
 		this.borderPane = new BorderPane();
 		this.dataObject = new ConnectFourDataObject();
 		this.dataManager = new ConnectFourDataManager(this.dataObject);
+		this.playerColor = Disc.EMPTY;
 		this.canvas = new ConnectFourCanvas(this.borderPane, this.dataObject.getDiscLocations());
 		this.client = new ConnectFourkObjectClient("localhost", 27272, this);
 		this.client.startClient();
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage) {
 		initButtons();
 		primaryStage.setScene(new Scene(this.borderPane));
 		primaryStage.setTitle("Connect 4");
@@ -69,7 +72,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 		this.messageArea.setMaxWidth(151);
 		this.messageArea.setMinWidth(150);
 
-		frame.getChildren().add(messageArea);
+		frame.getChildren().add(this.messageArea);
 
 		TextField messageField = new TextField();
 		frame.getChildren().add(messageField);
@@ -77,17 +80,12 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 		messageField.setOnKeyPressed(event -> {
 
 			if (event.getCode() == KeyCode.ENTER) {
-				//TODO send messages?
-				this.client.sendObjectMessage(playerColor+ ": " + messageField.getText());
+				this.client.sendObjectMessage(this.playerColor + ": " + messageField.getText());
 				messageField.clear();
 			}
-
 		});
 
 		this.borderPane.setRight(frame);
-
-		this.primaryStage = primaryStage;
-
 	}
 
 	public void initButtons() {
@@ -95,12 +93,13 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 		hBox.setAlignment(Pos.TOP_LEFT);
 		hBox.setPadding(new Insets(10, 0, 10, 25));
 		hBox.setSpacing(61);
+
 		for (int i = 0; i < 7; i++) {
-			Button button = new Button();
-			button.setGraphic(new ImageView("\\ArrowDown.png"));
+			Button dropButton = new Button();
+			dropButton.setGraphic(new ImageView("\\ArrowDown.png"));
 
 			int xValue = i;
-			button.setOnAction(event -> {
+			dropButton.setOnAction(event -> {
 				if (this.dataObject.getTurn().equals(this.playerColor) && this.dataObject.getWinner().equals(Disc.EMPTY)) {
 					this.dataManager.dropDisc(xValue, this.playerColor);
 					this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
@@ -109,7 +108,7 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 
 				}
 			});
-			hBox.getChildren().add(button);
+			hBox.getChildren().add(dropButton);
 		}
 		this.borderPane.setTop(hBox);
 
@@ -147,43 +146,33 @@ public class ConnectFourObjectApplication extends Application implements ObjectR
 		if (response instanceof Disc) {
 			this.playerColor = (Disc) response;
 
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					playerText.setText("You are: " + response);
-				}
-			});
+			Platform.runLater(() -> this.playerText.setText("You are: " + response));
 		}
 
 		if (response instanceof ConnectFourDataObject) {
 			this.dataObject = ((ConnectFourDataObject) response);
 			this.dataManager.setDataObject(this.dataObject);
 
-			System.out.println(this.dataObject.getWinner() + "Winner ");
 			if (this.dataObject.getWinner().equals(Disc.EMPTY)) {
-				System.out.println("received command");
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
 				this.turn = this.dataObject.getTurn();
 
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						turnText.setText("Turn: " + turn);
-					}
-				});
+				Platform.runLater(() -> this.turnText.setText("Turn: " + this.turn));
 
 			} else {
 				this.canvas.updateDiscLocations(this.dataObject.getDiscLocations());
-				if (this.dataObject.getWinner()!= this.playerColor) {
+
+				if (this.dataObject.getWinner() != this.playerColor && !this.dataObject.isGameDone()) {
 					this.client.sendObjectMessage(this.dataObject.getWinner() + " has won!");
 				}
+				this.dataObject.setGameDone(true);
 				this.canvas.drawWinTekst(this.dataObject.getWinner() + " WON");
 			}
 		}
 
 		if (response instanceof String) {
-				this.messageArea.setText(messageArea.getText() + response + "\n");
-				this.messageArea.selectPositionCaret(this.messageArea.getLength());
+			this.messageArea.setText(this.messageArea.getText() + response + "\n");
+			this.messageArea.selectPositionCaret(this.messageArea.getLength());
 		}
 	}
 
